@@ -97,6 +97,7 @@ interface ChatBubbleMessageProps
     VariantProps<typeof chatBubbleMessageVariants> {
   isLoading?: boolean;
   isSender?: boolean;
+  user?: string;
 }
 
 const ChatBubbleMessage = React.forwardRef<
@@ -110,6 +111,7 @@ const ChatBubbleMessage = React.forwardRef<
       layout,
       isLoading = false,
       isSender = false,
+      user,
       children,
       ...props
     },
@@ -117,7 +119,9 @@ const ChatBubbleMessage = React.forwardRef<
   ) => (
     <div className="space-y-1">
       {!isSender && (
-        <span className="text-xs text-[#414651] font-medium">Sam</span>
+        <span className="text-xs text-[#414651] font-medium">
+          {isSender ? "" : user}
+        </span>
       )}
       <div
         className={cn(
