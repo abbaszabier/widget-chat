@@ -3,10 +3,29 @@ import { cn } from "@/lib/utils";
 import { Delete, Send, Trash2, X } from "lucide-react";
 
 interface ChatInputProps
-  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+  extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  onSend: (message: string) => void;
+  editMessage?: string | null;
+  replyTo?: string | null;
+  onCancelEdit?: () => void;
+  onCancelReply?: () => void;
+}
 
 const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
-  ({ className, ...props }, ref) => {
+  (
+    {
+      onSend,
+      editMessage,
+      replyTo,
+      onCancelEdit,
+      onCancelReply,
+      className,
+      ...props
+    },
+    ref
+  ) => {
+    const [input, setInput] = React.useState<string>(editMessage || "");
+
     const [file, setFile] = React.useState<File | null>(null);
 
     const fileInputRef = React.useRef<HTMLInputElement>(null);
@@ -32,8 +51,20 @@ const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
       }
     };
 
+    React.useEffect(() => {
+      if (editMessage) setInput(editMessage);
+    }, [editMessage]);
+
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      if (input.trim()) {
+        onSend(input.trim());
+        setInput("");
+      }
+    };
+
     return (
-      <div className="relative flex flex-col w-full gap-2">
+      <div className="relative flex flex-col w-full gap-2 z-1">
         {file && (
           <div className="w-full flex justify-between p-2 gap-2 border border-gray-300 rounded-md bg-gray-50">
             <p className="text-sm font-medium text-gray-700">
@@ -44,8 +75,10 @@ const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
             </span>
           </div>
         )}
-
-        <div className="relative flex items-center w-full">
+        <form
+          onSubmit={handleSubmit}
+          className="relative flex items-center w-full z-1"
+        >
           <button
             type="button"
             onClick={handleFileClick}
@@ -60,32 +93,30 @@ const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
             onChange={handleFileChange}
             className="hidden"
           />
-
           <textarea
-            autoComplete="off"
             ref={ref}
-            name="message"
+            autoFocus={true}
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
             placeholder="Message"
             className={cn(
               "pl-10 pr-12 h-[52px] bg-[#F5F5F5] text-sm placeholder:text-muted-foreground focus-visible:outline-none  disabled:cursor-not-allowed disabled:opacity-50 w-full rounded-lg resize-none border border-[#E9EAEB] flex items-center",
               className
             )}
             style={{
-              paddingTop: "6px",
-              paddingBottom: "6px",
-              lineHeight: "2.4rem",
+              paddingTop: "16px",
+              paddingBottom: "16px",
+              lineHeight: "1.2rem",
             }}
             {...props}
           />
-
           <button
             type="submit"
             className="absolute flex items-center justify-center bg-white border border-[#D1E0FF] w-[36px] h-[36px] rounded-lg right-4 text-blue-500 hover:text-blue-600 hover:border-[#2970FF]"
-            aria-label="Send message"
           >
             <Send size={18} />
           </button>
-        </div>
+        </form>
       </div>
     );
   }
