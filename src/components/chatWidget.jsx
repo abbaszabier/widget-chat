@@ -144,7 +144,7 @@ export default function ChatWidget() {
   ];
 
   return (
-    <ExpandableChat size="md" position="bottom-right">
+    <ExpandableChat size="sm" position="bottom-right">
       <ExpandableChatHeader className="flex justify-start gap-2">
         <>
           <Image
@@ -180,11 +180,11 @@ export default function ChatWidget() {
               "Hi, this is your support agent. How can I assist you today?"
           ) && (
             <div className="flex justify-center items-center gap-2">
-              <hr className="w-1/6 md:w-1/4 border-t-1 border-[#E9EAEB]" />
+              <hr className="w-1/5 border-t-1 border-[#E9EAEB]" />
               <p className="text-xs text-gray-500">
                 You're now connected with agent
               </p>
-              <hr className="w-1/6 md:w-1/4 border-t-1 border-[#E9EAEB]" />
+              <hr className="w-1/5 border-t-1 border-[#E9EAEB]" />
             </div>
           )}
           {messages.map((message) => (
