@@ -1,24 +1,31 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Delete, Send, Trash2, X } from "lucide-react";
+import { ReplyAndEditBox } from "@/components/replyAndEditBox";
 
 interface ChatInputProps
   extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
   onSend: (message: string) => void;
+  onSendFile: (file: File) => void;
+  replyToMessage?: any;
+  setReplyToMessage?: any;
+  editMessageId?: string | null;
+  setEditMessageId?: any;
+  messages?: any;
   editMessage?: string | null;
-  replyTo?: string | null;
-  onCancelEdit?: () => void;
-  onCancelReply?: () => void;
 }
 
 const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
   (
     {
       onSend,
+      onSendFile,
+      replyToMessage,
+      setReplyToMessage,
+      editMessageId,
+      setEditMessageId,
+      messages,
       editMessage,
-      replyTo,
-      onCancelEdit,
-      onCancelReply,
       className,
       ...props
     },
@@ -38,7 +45,11 @@ const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (e.target.files && e.target.files.length > 0) {
-        setFile(e.target.files[0]);
+        const selectedFile = e.target.files[0];
+        onSendFile(selectedFile); // send file to parent component
+        if (fileInputRef.current) {
+          fileInputRef.current.value = ""; // clear file input
+        }
       }
     };
 
@@ -60,6 +71,8 @@ const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
       if (input.trim()) {
         onSend(input.trim());
         setInput("");
+        setReplyToMessage(null);
+        setEditMessageId(null);
       }
     };
 
@@ -74,6 +87,28 @@ const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
               <X size={20} onClick={handleFileDelete} />
             </span>
           </div>
+        )}
+        {replyToMessage && (
+          <ReplyAndEditBox
+            isSender={false}
+            type={"reply"}
+            replyToMessage={replyToMessage}
+            onCancel={() => {
+              setReplyToMessage(null);
+              setInput("");
+            }}
+          />
+        )}
+        {editMessageId && (
+          <ReplyAndEditBox
+            isSender={false}
+            type={"edit"}
+            replyToMessage={messages.find((msg) => msg.id === editMessageId)}
+            onCancel={() => {
+              setEditMessageId(null);
+              setInput("");
+            }}
+          />
         )}
         <form
           onSubmit={handleSubmit}

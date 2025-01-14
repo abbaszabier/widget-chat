@@ -18,13 +18,15 @@ import { Button } from "./ui/button";
 import { useState } from "react";
 import { Check, Copy, Edit, Reply, RotateCcw, Trash } from "lucide-react";
 import Image from "next/image";
-import { ReplyAndEditBox } from "./replyAndEditBox";
 import {
   Dialog,
   DialogHeader,
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { ReplyAndEditBox } from "./replyAndEditBox";
+import { FileIcon, defaultStyles } from "react-file-icon";
+import { formatDate } from "@/utils/formater";
 
 export default function ChatWidget() {
   // a dummy conversation
@@ -34,23 +36,57 @@ export default function ChatWidget() {
       isSender: false,
       user: "Sam",
       content: "Welcome to Sam's Website Support. What is your name?",
+      replyTo: null,
+      file: null,
+      // date format Friday, 2:20 PM
+      date: formatDate(new Date()),
     },
-    { id: 2, isSender: true, user: "User", content: "John Doe" },
-    { id: 3, isSender: false, user: "Sam", content: "What is your email?" },
-    { id: 4, isSender: true, user: "User", content: "john.doe@example.com" },
+    {
+      id: 2,
+      isSender: true,
+      user: "User",
+      content: "John Doe",
+      replyTo: null,
+      file: null,
+      date: formatDate(new Date()),
+    },
+    {
+      id: 3,
+      isSender: false,
+      user: "Sam",
+      content: "What is your email?",
+      replyTo: null,
+      file: null,
+      date: formatDate(new Date()),
+    },
+    {
+      id: 4,
+      isSender: true,
+      user: "User",
+      content: "john.doe@example.com",
+      replyTo: null,
+      file: null,
+      date: formatDate(new Date()),
+    },
     {
       id: 5,
       isSender: false,
       user: "Sam",
       content: "How do you want to contact us?",
+      replyTo: null,
+      file: null,
+      date: formatDate(new Date()),
     },
   ]);
+
+  const styledIcons = Object.keys(defaultStyles);
 
   // edit message state
   const [editMessageId, setEditMessageId] = useState(null);
 
   // reply to message state
   const [replyToMessage, setReplyToMessage] = useState(null);
+  console.log(messages);
 
   // copied message state
   const [copiedMessageId, setCopiedMessageId] = useState(null);
@@ -82,15 +118,45 @@ export default function ChatWidget() {
         isSender: false,
         user: "Sam",
         content: "Welcome to Sam's Website Support. What is your name?",
+        replyTo: null,
+        file: null,
+        date: formatDate(new Date()),
       },
-      { id: 2, isSender: true, user: "User", content: "John Doe" },
-      { id: 3, isSender: false, user: "Sam", content: "What is your email?" },
-      { id: 4, isSender: true, user: "User", content: "john.doe@example.com" },
+      {
+        id: 2,
+        isSender: true,
+        user: "User",
+        content: "John Doe",
+        replyTo: null,
+        file: null,
+        date: formatDate(new Date()),
+      },
+      {
+        id: 3,
+        isSender: false,
+        user: "Sam",
+        content: "What is your email?",
+        replyTo: null,
+        file: null,
+        date: formatDate(new Date()),
+      },
+      {
+        id: 4,
+        isSender: true,
+        user: "User",
+        content: "john.doe@example.com",
+        replyTo: null,
+        file: null,
+        date: formatDate(new Date()),
+      },
       {
         id: 5,
         isSender: false,
         user: "Sam",
         content: "How do you want to contact us?",
+        replyTo: null,
+        file: null,
+        date: formatDate(new Date()),
       },
     ]);
 
@@ -108,12 +174,18 @@ export default function ChatWidget() {
           isSender: true,
           user: "User",
           content: contactMethod,
+          replyTo: null,
+          file: null,
+          date: formatDate(new Date()),
         },
         {
           id: messages.length + 2,
           isSender: false,
           user: "Sam",
           content: `Click here to start ${contactMethod}`,
+          replyTo: null,
+          file: null,
+          date: formatDate(new Date()),
         },
       ];
       setMessages(newMessages);
@@ -126,6 +198,9 @@ export default function ChatWidget() {
           isSender: true,
           user: "User",
           content: contactMethod,
+          replyTo: null,
+          file: null,
+          date: formatDate(new Date()),
         },
         {
           id: messages.length + 2,
@@ -133,6 +208,9 @@ export default function ChatWidget() {
           user: "Sam",
           content:
             "Thanks for the details! Connecting you to a support agent now... 🎧 Please hold on for a moment!",
+          replyTo: null,
+          file: null,
+          date: formatDate(new Date()),
         },
       ];
       setMessages(newMessages);
@@ -152,6 +230,9 @@ export default function ChatWidget() {
               user: "Agent",
               content:
                 "Hi, this is your support agent. How can I assist you today?",
+              replyTo: null,
+              file: null,
+              date: formatDate(new Date()),
             },
           ]);
         } else {
@@ -164,6 +245,9 @@ export default function ChatWidget() {
               user: "Sam",
               content:
                 "All agents are currently busy for your selected contact method. Please try one of the following available options:",
+              replyTo: null,
+              file: null,
+              date: formatDate(new Date()),
             },
           ]);
         }
@@ -208,16 +292,31 @@ export default function ChatWidget() {
         isSender: true,
         user: "User",
         content,
+        replyTo: replyToMessage,
+        file: null,
+        date: formatDate(new Date()),
       };
       setMessages((prev) => [...prev, newMessage]);
     }
+  };
+
+  const handleSendFile = (file) => {
+    const newMessage = {
+      id: messages.length + 1,
+      isSender: true,
+      user: "User",
+      content: null,
+      replyTo: null,
+      file,
+      date: formatDate(new Date()),
+    };
+    setMessages((prev) => [...prev, newMessage]);
   };
 
   const handleEditMessage = (messageId) => {
     const message = messages.find((msg) => msg.id === messageId);
     if (message) {
       setEditMessageId(messageId);
-      // Set input field value untuk pengeditan
     }
     setReplyToMessage(null); // Reset replyToMessage
   };
@@ -262,9 +361,8 @@ export default function ChatWidget() {
       ) && (
         <div className="flex w-full mt-2 px-4 justify-center items-center gap-2">
           <Button
-            variant="outline"
             size="sm"
-            className="w-full"
+            className="w-full bg-[#2970FF] text-white hover:bg-[#2C7DFF]"
             onClick={() => {
               setAction("restart");
               setOpen(true);
@@ -318,6 +416,7 @@ export default function ChatWidget() {
                     variant={message.isSender ? "sent" : "received"}
                     isSender={message.isSender}
                     user={!message.isSender ? message.user : ""}
+                    time={message.date}
                   >
                     {message.content}
                   </ChatBubbleMessage>
@@ -325,6 +424,7 @@ export default function ChatWidget() {
                     variant="received2"
                     isSender={true}
                     user={!message.isSender ? message.user : ""}
+                    time={message.date}
                   >
                     <div className="flex flex-col gap-2">
                       {availableContacts.map((contact) => (
@@ -356,6 +456,7 @@ export default function ChatWidget() {
                     variant={message.isSender ? "sent" : "received"}
                     isSender={message.isSender}
                     user={!message.isSender ? message.user : ""}
+                    time={message.date}
                   >
                     {message.content}
                   </ChatBubbleMessage>
@@ -363,6 +464,7 @@ export default function ChatWidget() {
                     variant="received2"
                     isSender={true}
                     user={!message.isSender ? message.user : ""}
+                    time={message.date}
                   >
                     <div className="flex flex-col gap-2">
                       {availableContacts.map((contact) => (
@@ -393,6 +495,7 @@ export default function ChatWidget() {
                     variant={message.isSender ? "sent" : "received"}
                     isSender={message.isSender}
                     user={!message.isSender ? message.user : ""}
+                    time={message.date}
                   >
                     {message.content}
                   </ChatBubbleMessage>
@@ -400,6 +503,7 @@ export default function ChatWidget() {
                     variant="received2"
                     isSender={true}
                     user={!message.isSender ? message.user : ""}
+                    time={message.date}
                   >
                     <div className="flex flex-col gap-2">
                       {availableContacts
@@ -443,8 +547,54 @@ export default function ChatWidget() {
                   user={!message.isSender ? message.user : ""}
                   isSender={message.isSender}
                   className="border"
+                  time={message.date}
                 >
-                  {message.content}
+                  {message?.replyTo && (
+                    <ReplyAndEditBox
+                      replyToMessage={message.replyTo}
+                      onCancel={() => setReplyToMessage(null)}
+                      type="reply"
+                      replayTo
+                      isSender={message.isSender}
+                    />
+                  )}
+                  {message.file ? (
+                    message.file.type.startsWith("image/") ? (
+                      <img
+                        src={URL.createObjectURL(message.file)}
+                        alt={message.file.name}
+                        className="max-w-[250px] max-h-[250px] object-contain rounded"
+                      />
+                    ) : (
+                      <div
+                        onClick={() => {
+                          const url = URL.createObjectURL(message.file);
+                          const a = document.createElement("a");
+                          a.href = url;
+                          a.download = message.file.name;
+                          a.click();
+                        }}
+                        className="flex items-center gap-2 border bg-white rounded p-2 cursor-pointer"
+                      >
+                        <div className="w-[32px] h-[32px]">
+                          <FileIcon
+                            extension={message.file.name.split(".").pop()}
+                            {...styledIcons}
+                          />
+                        </div>
+                        <div>
+                          <p className="text-sm text-gray-700 font-medium truncate w-[160px]">
+                            {message.file.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            {(message.file.size / 1024).toFixed(1)} KB
+                          </p>
+                        </div>
+                      </div>
+                    )
+                  ) : (
+                    message.content
+                  )}
                 </ChatBubbleMessage>
               )}
               <ChatBubbleActionWrapper>
@@ -471,9 +621,9 @@ export default function ChatWidget() {
                 {message?.isSender &&
                   actionUserIcons.map(({ icon: Icon, type }) => (
                     <ChatBubbleAction
-                      className="size-7"
+                      className={`size-7`}
                       key={type}
-                      icon={Icon ? <Icon className="size-4" /> : null}
+                      icon={Icon && <Icon className="size-4" />}
                       onClick={() => {
                         if (type === "edit") handleEditMessage(message.id);
                         if (type === "delete") handleDeleteMessage(message.id);
@@ -490,24 +640,16 @@ export default function ChatWidget() {
           {isLoading && "Connecting you to an agent..."}
         </p>
       </div>
-      {replyToMessage && (
-        <ReplyAndEditBox
-          type={"reply"}
-          replyToMessage={replyToMessage}
-          onCancel={() => setReplyToMessage(null)}
-        />
-      )}
-      {editMessageId && (
-        <ReplyAndEditBox
-          type={"edit"}
-          replyToMessage={messages.find((msg) => msg.id === editMessageId)}
-          onCancel={() => setEditMessageId(null)}
-        />
-      )}
 
       <ExpandableChatFooter className="border-0 flex flex-col gap-2">
         <ChatInput
           onSend={handleSendMessage}
+          onSendFile={handleSendFile}
+          replyToMessage={replyToMessage}
+          setReplyToMessage={setReplyToMessage}
+          editMessageId={editMessageId}
+          setEditMessageId={setEditMessageId}
+          messages={messages}
           editMessage={
             editMessageId !== null
               ? messages.find((msg) => msg.id === editMessageId).content
