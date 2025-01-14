@@ -20,7 +20,7 @@ import { EllipsisVertical, X } from "lucide-react";
 import Image from "next/image";
 
 export default function ChatWidget() {
-  // a chat conversation
+  // a dummy conversation
   const [messages, setMessages] = useState([
     {
       id: 1,
@@ -46,50 +46,94 @@ export default function ChatWidget() {
     { id: "livechat", label: "Live Chat", icon: "/livechatColor.svg" },
   ]);
 
+  // agent availability
   const [isAgentAvailable, setIsAgentAvailable] = useState(null);
 
+  // loading state
+  const [isLoading, setIsLoading] = useState(false);
+
+  // handle contact selection
   const handleContactSelection = (contactMethod) => {
-    const newMessages = [
-      ...messages,
-      {
-        id: messages.length + 1,
-        isSender: true,
-        user: "User",
-        content: contactMethod,
-      },
-      {
-        id: messages.length + 2,
-        isSender: false,
-        user: "Sam",
-        content:
-          "Thanks for the details! Connecting you to a support agent now... 🎧 Please hold on for a moment!",
-      },
-    ];
+    if (contactMethod === "WhatsApp" || contactMethod === "Telegram") {
+      // Show the selected contact method
+      const newMessages = [
+        ...messages,
+        {
+          id: messages.length + 1,
+          isSender: true,
+          user: "User",
+          content: contactMethod,
+        },
+        {
+          id: messages.length + 2,
+          isSender: false,
+          user: "Sam",
+          content: `Click here to start ${contactMethod}`,
+        },
+      ];
+      setMessages(newMessages);
+    } else if (contactMethod === "Live Chat") {
+      // Show the selected contact method
+      const newMessages = [
+        ...messages,
+        {
+          id: messages.length + 1,
+          isSender: true,
+          user: "User",
+          content: contactMethod,
+        },
+        {
+          id: messages.length + 2,
+          isSender: false,
+          user: "Sam",
+          content:
+            "Thanks for the details! Connecting you to a support agent now... 🎧 Please hold on for a moment!",
+        },
+      ];
+      setMessages(newMessages);
+      setIsLoading(true);
 
-    setMessages(newMessages);
+      // a dummy agent availability check
+      setTimeout(() => {
+        const agentAvailable = Math.random() > 0.5; // Randomly set agent availability
+        setIsAgentAvailable(agentAvailable);
 
-    // Simulate agent availability check
-    setTimeout(() => {
-      const agentAvailable = Math.random() > 0.5; // Simulate a 50% chance
-      setIsAgentAvailable(agentAvailable);
-      if (!agentAvailable) {
-        const updatedContacts = availableContacts.filter(
-          (contact) => contact.id !== contactMethod.toLowerCase()
-        );
-        setAvailableContacts(updatedContacts);
+        if (agentAvailable) {
+          // Reset the messages and show the agent's greeting message
+          setMessages([
+            {
+              id: 1,
+              isSender: false,
+              user: "Agent",
+              content:
+                "Hi, this is your support agent. How can I assist you today?",
+            },
+          ]);
+        } else {
+          // Erase the selected contact method
+          const updatedContacts = availableContacts.filter(
+            (contact) =>
+              contact.label.toLowerCase() !== contactMethod.toLowerCase()
+          );
 
-        setMessages((prevMessages) => [
-          ...prevMessages,
-          {
-            id: prevMessages.length + 1,
-            isSender: false,
-            user: "Sam",
-            content:
-              "All agents are currently busy for your selected contact method. Please try one of the following available options:",
-          },
-        ]);
-      }
-    }, 2000); // Simulate network delay
+          // Update the available contacts
+          setAvailableContacts(updatedContacts);
+
+          // set the messages to show the agent is busy
+          setMessages((prevMessages) => [
+            ...prevMessages,
+            {
+              id: prevMessages.length + 1,
+              isSender: false,
+              user: "Sam",
+              content:
+                "All agents are currently busy for your selected contact method. Please try one of the following available options:",
+            },
+          ]);
+        }
+        setIsLoading(false); // Reset the loading state
+      }, 2000); // delay for 2 seconds
+    }
   };
 
   const actionIcons = [
@@ -100,7 +144,7 @@ export default function ChatWidget() {
   ];
 
   return (
-    <ExpandableChat size="lg" position="bottom-right">
+    <ExpandableChat size="md" position="bottom-right">
       <ExpandableChatHeader className="flex justify-start gap-2">
         <>
           <Image
@@ -113,8 +157,36 @@ export default function ChatWidget() {
           <h1 className="text-lg">Sam's Website Support</h1>
         </>
       </ExpandableChatHeader>
+      {messages.find(
+        (message) =>
+          message.content ===
+          "Hi, this is your support agent. How can I assist you today?"
+      ) && (
+        <div className="flex w-full mt-2 px-4 justify-center items-center gap-2">
+          <Button variant="outline" size="sm" className="w-full">
+            Switch Platform
+          </Button>
+          <Button variant="outline" size="sm" className="w-full">
+            End Chat
+          </Button>
+        </div>
+      )}
       <ExpandableChatBody>
         <ChatMessageList>
+          {/* divider */}
+          {messages.find(
+            (message) =>
+              message.content ===
+              "Hi, this is your support agent. How can I assist you today?"
+          ) && (
+            <div className="flex justify-center items-center gap-2">
+              <hr className="w-1/4 border-t-1 border-[#E9EAEB]" />
+              <p className="text-xs text-gray-500">
+                You're now connected with agent
+              </p>
+              <hr className="w-1/4 border-t-1 border-[#E9EAEB]" />
+            </div>
+          )}
           {messages.map((message) => (
             <ChatBubble
               key={message.id}
@@ -188,10 +260,57 @@ export default function ChatWidget() {
                     </div>
                   </ChatBubbleMessage>
                 </div>
+              ) : (message.content === "Click here to start Telegram") |
+                (message.content === "Click here to start WhatsApp") ? (
+                <div className="flex flex-col gap-2">
+                  <ChatBubbleMessage
+                    variant={message.isSender ? "sent" : "received"}
+                    isSender={message.isSender}
+                  >
+                    {message.content}
+                  </ChatBubbleMessage>
+                  <ChatBubbleMessage variant="received2" isSender={true}>
+                    <div className="flex flex-col gap-2">
+                      {availableContacts
+                        .filter(
+                          (contact) =>
+                            contact.label.toLowerCase() ===
+                            message.content.split(" ").pop().toLowerCase()
+                        )
+                        .map((contact) => (
+                          <Button
+                            key={contact.id}
+                            variant="bgWhite"
+                            size="sm"
+                            className="flex items-center justify-start gap-2"
+                            // open link whatsapp or telegram
+                            onClick={() =>
+                              window.open(
+                                contact.label === "WhatsApp"
+                                  ? "https://wa.me/6281234567890"
+                                  : "https://t.me/username",
+                                "_blank"
+                              )
+                            }
+                          >
+                            <Image
+                              aria-hidden
+                              src={contact.icon}
+                              alt="File icon"
+                              width={20}
+                              height={20}
+                            />
+                            {contact.label}
+                          </Button>
+                        ))}
+                    </div>
+                  </ChatBubbleMessage>
+                </div>
               ) : (
                 <ChatBubbleMessage
                   variant={message.isSender ? "sent" : "received"}
                   isSender={message.isSender}
+                  className="border"
                 >
                   {message.content}
                 </ChatBubbleMessage>
@@ -212,7 +331,12 @@ export default function ChatWidget() {
           ))}
         </ChatMessageList>
       </ExpandableChatBody>
-      <ExpandableChatFooter className="border-0">
+      <div className="flex justify-center items-center gap-2">
+        <p className="text-xs text-gray-500">
+          {isLoading && "Connecting you to an agent..."}
+        </p>
+      </div>
+      <ExpandableChatFooter className="border-0 flex flex-col gap-2">
         <ChatInput />
       </ExpandableChatFooter>
     </ExpandableChat>
