@@ -522,11 +522,11 @@ export default function ChatWidget() {
               <DialogHeader>
                 <DialogTitle className="">
                   {action === "restart" ? (
-                    <div className="flex items-center gap-2 bg-[#2970FF] p-1 rounded w-fit p-4 mb-3">
+                    <div className="flex items-center gap-2 bg-[#2970FF] p-1 rounded w-fit p-2 mb-3">
                       <RotateCcw className="p-1" color="#ffffff" />
                     </div>
                   ) : (
-                    <div className="flex items-center gap-2 bg-red-500 p-1 rounded w-fit p-4 mb-3">
+                    <div className="flex items-center gap-2 bg-red-500 p-1 rounded w-fit p-2 mb-3">
                       <Trash className="p-1" color="#ffffff" />
                     </div>
                   )}
