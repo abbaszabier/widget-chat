@@ -234,6 +234,15 @@ export default function ChatWidget() {
               file: null,
               date: formatDate(new Date()),
             },
+            {
+              id: 2,
+              isSender: true,
+              user: "User",
+              content: "Hi, this is example user message",
+              replyTo: null,
+              file: null,
+              date: formatDate(new Date()),
+            },
           ]);
         } else {
           // set the messages to show the agent is busy
@@ -359,7 +368,7 @@ export default function ChatWidget() {
           message.content ===
           "Hi, this is your support agent. How can I assist you today?"
       ) && (
-        <div className="flex w-full mt-2 px-4 justify-center items-center gap-2">
+        <div className="flex bg-white w-full py-2 px-4 justify-center items-center gap-2">
           <Button
             size="sm"
             className="w-full bg-[#2970FF] text-white hover:bg-[#2C7DFF]"
@@ -659,7 +668,7 @@ export default function ChatWidget() {
           <div className="bg-white space-y-4 rounded-lg p-4 w-[80%] max-w-md">
             <Dialog>
               <DialogHeader>
-                <DialogTitle className="">
+                <DialogTitle className="text-left">
                   {action === "restart" ? (
                     <div className="flex items-center gap-2 bg-[#2970FF] rounded w-fit p-2 mb-3">
                       <RotateCcw className="p-1" color="#ffffff" />
@@ -671,7 +680,7 @@ export default function ChatWidget() {
                   )}
                   {action === "restart" ? "Restart Chat" : "End Chat"}
                 </DialogTitle>
-                <DialogDescription className="mb-4">
+                <DialogDescription className="mb-4 text-left">
                   {action === "restart"
                     ? "Are you sure you want to restart? Your current conversation will be lost."
                     : "Are you sure you want to end this conversation? You can't undo this action."}
