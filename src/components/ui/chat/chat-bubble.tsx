@@ -98,6 +98,7 @@ interface ChatBubbleMessageProps
   isLoading?: boolean;
   isSender?: boolean;
   user?: string;
+  time?: string;
 }
 
 const ChatBubbleMessage = React.forwardRef<
@@ -112,6 +113,7 @@ const ChatBubbleMessage = React.forwardRef<
       isLoading = false,
       isSender = false,
       user,
+      time,
       children,
       ...props
     },
@@ -120,7 +122,12 @@ const ChatBubbleMessage = React.forwardRef<
     <div className="space-y-1">
       {!isSender && (
         <span className="text-xs text-[#414651] font-medium">
-          {isSender ? "" : user}
+          {isSender ? "" : user} • {time}
+        </span>
+      )}
+      {isSender && (
+        <span className="text-xs text-[#414651] font-medium text-right flex justify-end">
+          {time}
         </span>
       )}
       <div
