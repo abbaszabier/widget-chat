@@ -424,7 +424,6 @@ export default function ChatWidget() {
                     variant="received2"
                     isSender={true}
                     user={!message.isSender ? message.user : ""}
-                    time={message.date}
                   >
                     <div className="flex flex-col gap-2">
                       {availableContacts.map((contact) => (
@@ -464,7 +463,6 @@ export default function ChatWidget() {
                     variant="received2"
                     isSender={true}
                     user={!message.isSender ? message.user : ""}
-                    time={message.date}
                   >
                     <div className="flex flex-col gap-2">
                       {availableContacts.map((contact) => (
@@ -503,7 +501,6 @@ export default function ChatWidget() {
                     variant="received2"
                     isSender={true}
                     user={!message.isSender ? message.user : ""}
-                    time={message.date}
                   >
                     <div className="flex flex-col gap-2">
                       {availableContacts
