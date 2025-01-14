@@ -59,7 +59,7 @@ const ExpandableChat: React.FC<ExpandableChatProps> = ({
       <div
         ref={chatRef}
         className={cn(
-          "flex flex-col bg-[#F5F5F5]  border sm:rounded-lg shadow-md overflow-hidden transition-all duration-250 ease-out sm:absolute sm:w-[90vw] sm:h-[80vh] fixed inset-0 w-full h-full sm:inset-auto",
+          "flex flex-col border sm:rounded-lg shadow-md overflow-hidden transition-all duration-250 ease-out sm:absolute sm:w-[90vw] sm:h-[80vh] fixed inset-0 w-full h-full sm:inset-auto",
           chatConfig.chatPositions[position],
           chatConfig.dimensions[size],
           isOpen ? chatConfig.states.open : chatConfig.states.closed,
@@ -87,10 +87,7 @@ const ExpandableChatHeader: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   ...props
 }) => (
   <div
-    className={cn(
-      "flex items-center bg-[#F5F5F5] justify-between p-4 border-b",
-      className
-    )}
+    className={cn("flex items-center justify-between p-4 border-b", className)}
     {...props}
   />
 );
