@@ -16,8 +16,15 @@ import {
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { Button } from "./ui/button";
 import { useState } from "react";
-import { EllipsisVertical, X } from "lucide-react";
+import { Check, Copy, Edit, Reply, RotateCcw, Trash } from "lucide-react";
 import Image from "next/image";
+import { ReplyAndEditBox } from "./replyAndEditBox";
+import {
+  Dialog,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 
 export default function ChatWidget() {
   // a dummy conversation
@@ -39,6 +46,15 @@ export default function ChatWidget() {
     },
   ]);
 
+  // edit message state
+  const [editMessageId, setEditMessageId] = useState(null);
+
+  // reply to message state
+  const [replyToMessage, setReplyToMessage] = useState(null);
+
+  // copied message state
+  const [copiedMessageId, setCopiedMessageId] = useState(null);
+
   // contact methods
   const [availableContacts, setAvailableContacts] = useState([
     { id: "whatsapp", label: "WhatsApp", icon: "/whatsapp.svg" },
@@ -51,6 +67,35 @@ export default function ChatWidget() {
 
   // loading state
   const [isLoading, setIsLoading] = useState(false);
+
+  // dialog state
+  const [open, setOpen] = useState(false);
+
+  // dialog action state
+  const [action, setAction] = useState(null);
+
+  // handle dialog action
+  const handleDialogAction = () => {
+    setMessages([
+      {
+        id: 1,
+        isSender: false,
+        user: "Sam",
+        content: "Welcome to Sam's Website Support. What is your name?",
+      },
+      { id: 2, isSender: true, user: "User", content: "John Doe" },
+      { id: 3, isSender: false, user: "Sam", content: "What is your email?" },
+      { id: 4, isSender: true, user: "User", content: "john.doe@example.com" },
+      {
+        id: 5,
+        isSender: false,
+        user: "Sam",
+        content: "How do you want to contact us?",
+      },
+    ]);
+
+    setOpen(false);
+  };
 
   // handle contact selection
   const handleContactSelection = (contactMethod) => {
@@ -110,15 +155,6 @@ export default function ChatWidget() {
             },
           ]);
         } else {
-          // Erase the selected contact method
-          const updatedContacts = availableContacts.filter(
-            (contact) =>
-              contact.label.toLowerCase() !== contactMethod.toLowerCase()
-          );
-
-          // Update the available contacts
-          setAvailableContacts(updatedContacts);
-
           // set the messages to show the agent is busy
           setMessages((prevMessages) => [
             ...prevMessages,
@@ -136,12 +172,74 @@ export default function ChatWidget() {
     }
   };
 
-  const actionIcons = [
+  const actionUserIcons = [
     {
-      icon: EllipsisVertical,
-      type: "close",
+      icon: Edit,
+      type: "edit",
+    },
+    {
+      icon: Trash,
+      type: "delete",
     },
   ];
+
+  const actionAgentIcons = [
+    {
+      icon: Reply,
+      type: "reply",
+    },
+    {
+      icon: Copy,
+      type: "copy",
+    },
+  ];
+
+  const handleSendMessage = (content) => {
+    if (editMessageId !== null) {
+      setMessages((prev) =>
+        prev.map((msg) =>
+          msg.id === editMessageId ? { ...msg, content } : msg
+        )
+      );
+      setEditMessageId(null);
+    } else {
+      const newMessage = {
+        id: messages.length + 1,
+        isSender: true,
+        user: "User",
+        content,
+      };
+      setMessages((prev) => [...prev, newMessage]);
+    }
+  };
+
+  const handleEditMessage = (messageId) => {
+    const message = messages.find((msg) => msg.id === messageId);
+    if (message) {
+      setEditMessageId(messageId);
+      // Set input field value untuk pengeditan
+    }
+    setReplyToMessage(null); // Reset replyToMessage
+  };
+
+  const handleDeleteMessage = (messageId) => {
+    const updatedMessages = messages.filter((msg) => msg.id !== messageId);
+    setMessages(updatedMessages); // Update messages state
+  };
+
+  const handleCopyMessage = (message, messageId) => {
+    navigator.clipboard.writeText(message); // copy message to clipboard
+    setCopiedMessageId(messageId); //
+    setTimeout(() => setCopiedMessageId(null), 1000); // Reset copiedMessageId after 1 second
+  };
+
+  const handleReplyMessage = (messageId) => {
+    const message = messages.find((msg) => msg.id === messageId);
+    if (message) {
+      setReplyToMessage(message); // Set replyToMessage
+    }
+    setEditMessageId(null); // Reset editMessageId
+  };
 
   return (
     <ExpandableChat size="sm" position="bottom-right">
@@ -163,10 +261,28 @@ export default function ChatWidget() {
           "Hi, this is your support agent. How can I assist you today?"
       ) && (
         <div className="flex w-full mt-2 px-4 justify-center items-center gap-2">
-          <Button variant="outline" size="sm" className="w-full">
-            Switch Platform
+          <Button
+            variant="outline"
+            size="sm"
+            className="w-full"
+            onClick={() => {
+              setAction("restart");
+              setOpen(true);
+            }}
+          >
+            <RotateCcw className="size-3" />
+            Restart Chat
           </Button>
-          <Button variant="destructive" size="sm" className="w-full">
+          <Button
+            variant="destructive"
+            size="sm"
+            className="w-full"
+            onClick={() => {
+              setAction("end");
+              setOpen(true);
+            }}
+          >
+            <Trash className="size-3" />
             End Chat
           </Button>
         </div>
@@ -201,10 +317,15 @@ export default function ChatWidget() {
                   <ChatBubbleMessage
                     variant={message.isSender ? "sent" : "received"}
                     isSender={message.isSender}
+                    user={!message.isSender ? message.user : ""}
                   >
                     {message.content}
                   </ChatBubbleMessage>
-                  <ChatBubbleMessage variant="received2" isSender={true}>
+                  <ChatBubbleMessage
+                    variant="received2"
+                    isSender={true}
+                    user={!message.isSender ? message.user : ""}
+                  >
                     <div className="flex flex-col gap-2">
                       {availableContacts.map((contact) => (
                         <Button
@@ -234,10 +355,15 @@ export default function ChatWidget() {
                   <ChatBubbleMessage
                     variant={message.isSender ? "sent" : "received"}
                     isSender={message.isSender}
+                    user={!message.isSender ? message.user : ""}
                   >
                     {message.content}
                   </ChatBubbleMessage>
-                  <ChatBubbleMessage variant="received2" isSender={true}>
+                  <ChatBubbleMessage
+                    variant="received2"
+                    isSender={true}
+                    user={!message.isSender ? message.user : ""}
+                  >
                     <div className="flex flex-col gap-2">
                       {availableContacts.map((contact) => (
                         <Button
@@ -266,10 +392,15 @@ export default function ChatWidget() {
                   <ChatBubbleMessage
                     variant={message.isSender ? "sent" : "received"}
                     isSender={message.isSender}
+                    user={!message.isSender ? message.user : ""}
                   >
                     {message.content}
                   </ChatBubbleMessage>
-                  <ChatBubbleMessage variant="received2" isSender={true}>
+                  <ChatBubbleMessage
+                    variant="received2"
+                    isSender={true}
+                    user={!message.isSender ? message.user : ""}
+                  >
                     <div className="flex flex-col gap-2">
                       {availableContacts
                         .filter(
@@ -309,6 +440,7 @@ export default function ChatWidget() {
               ) : (
                 <ChatBubbleMessage
                   variant={message.isSender ? "sent" : "received"}
+                  user={!message.isSender ? message.user : ""}
                   isSender={message.isSender}
                   className="border"
                 >
@@ -316,16 +448,38 @@ export default function ChatWidget() {
                 </ChatBubbleMessage>
               )}
               <ChatBubbleActionWrapper>
-                {actionIcons.map(({ icon: Icon, type }) => (
-                  <ChatBubbleAction
-                    className="size-7"
-                    key={type}
-                    icon={<Icon className="size-4" />}
-                    onClick={() =>
-                      console.log("Action " + type + " clicked for message ")
-                    }
-                  />
-                ))}
+                {!message?.isSender &&
+                  actionAgentIcons.map(({ icon: Icon, type }) => (
+                    <ChatBubbleAction
+                      className="size-7"
+                      key={type}
+                      icon={
+                        type === "copy" && copiedMessageId === message.id ? (
+                          <Check className="size-4" />
+                        ) : (
+                          Icon && <Icon className="size-4" />
+                        )
+                      }
+                      onClick={() => {
+                        if (type === "copy")
+                          handleCopyMessage(message.content, message.id);
+                        if (type === "reply") handleReplyMessage(message.id);
+                      }}
+                    />
+                  ))}
+
+                {message?.isSender &&
+                  actionUserIcons.map(({ icon: Icon, type }) => (
+                    <ChatBubbleAction
+                      className="size-7"
+                      key={type}
+                      icon={Icon ? <Icon className="size-4" /> : null}
+                      onClick={() => {
+                        if (type === "edit") handleEditMessage(message.id);
+                        if (type === "delete") handleDeleteMessage(message.id);
+                      }}
+                    />
+                  ))}
               </ChatBubbleActionWrapper>
             </ChatBubble>
           ))}
@@ -336,9 +490,77 @@ export default function ChatWidget() {
           {isLoading && "Connecting you to an agent..."}
         </p>
       </div>
+      {replyToMessage && (
+        <ReplyAndEditBox
+          type={"reply"}
+          replyToMessage={replyToMessage}
+          onCancel={() => setReplyToMessage(null)}
+        />
+      )}
+      {editMessageId && (
+        <ReplyAndEditBox
+          type={"edit"}
+          replyToMessage={messages.find((msg) => msg.id === editMessageId)}
+          onCancel={() => setEditMessageId(null)}
+        />
+      )}
+
       <ExpandableChatFooter className="border-0 flex flex-col gap-2">
-        <ChatInput />
+        <ChatInput
+          onSend={handleSendMessage}
+          editMessage={
+            editMessageId !== null
+              ? messages.find((msg) => msg.id === editMessageId).content
+              : ""
+          }
+        />
       </ExpandableChatFooter>
+      {open && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/40">
+          <div className="bg-white space-y-4 rounded-lg p-4 w-[80%] max-w-md">
+            <Dialog>
+              <DialogHeader>
+                <DialogTitle className="">
+                  {action === "restart" ? (
+                    <div className="flex items-center gap-2 bg-[#2970FF] p-1 rounded w-fit p-4 mb-3">
+                      <RotateCcw className="p-1" color="#ffffff" />
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2 bg-red-500 p-1 rounded w-fit p-4 mb-3">
+                      <Trash className="p-1" color="#ffffff" />
+                    </div>
+                  )}
+                  {action === "restart" ? "Restart Chat" : "End Chat"}
+                </DialogTitle>
+                <DialogDescription className="mb-4">
+                  {action === "restart"
+                    ? "Are you sure you want to restart? Your current conversation will be lost."
+                    : "Are you sure you want to end this conversation? You can't undo this action."}
+                </DialogDescription>
+              </DialogHeader>
+              <div className="flex flex-col gap-2 border-t border-gray-100">
+                <Button
+                  className={`w-full ${
+                    action === "restart"
+                      ? "bg-[#2970FF] text-white hover:bg-[#2C7DFF]"
+                      : "bg-destructive text-destructive-foreground hover:bg-destructive/95"
+                  }`}
+                  onClick={handleDialogAction}
+                >
+                  {action === "restart" ? "Restart Chat" : "End Chat"}
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => setOpen(false)}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </Dialog>
+          </div>
+        </div>
+      )}
     </ExpandableChat>
   );
 }
