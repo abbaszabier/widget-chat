@@ -95,7 +95,7 @@ export default function ChatWidget() {
 
       // a dummy agent availability check
       setTimeout(() => {
-        const agentAvailable = Math.random() > 0.5; // Randomly set agent availability
+        const agentAvailable = Math.random(0, 1) > 0.5; // Randomly set agent availability
         setIsAgentAvailable(agentAvailable);
 
         if (agentAvailable) {
@@ -166,7 +166,7 @@ export default function ChatWidget() {
           <Button variant="outline" size="sm" className="w-full">
             Switch Platform
           </Button>
-          <Button variant="outline" size="sm" className="w-full">
+          <Button variant="destructive" size="sm" className="w-full">
             End Chat
           </Button>
         </div>
