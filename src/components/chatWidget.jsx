@@ -79,6 +79,7 @@ export default function ChatWidget() {
     },
   ]);
 
+  // file icon styles
   const styledIcons = Object.keys(defaultStyles);
 
   // edit message state
@@ -86,7 +87,6 @@ export default function ChatWidget() {
 
   // reply to message state
   const [replyToMessage, setReplyToMessage] = useState(null);
-  console.log(messages);
 
   // copied message state
   const [copiedMessageId, setCopiedMessageId] = useState(null);
@@ -240,6 +240,23 @@ export default function ChatWidget() {
               user: "User",
               content: "Hi, this is example user message",
               replyTo: null,
+              file: null,
+              date: formatDate(new Date()),
+            },
+            {
+              id: 3,
+              isSender: false,
+              user: "Agent",
+              content: "this is example reply from agent",
+              replyTo: {
+                id: 2,
+                isSender: true,
+                user: "User",
+                content: "Hi, this is example user message",
+                replyTo: null,
+                file: null,
+                date: formatDate(new Date()),
+              },
               file: null,
               date: formatDate(new Date()),
             },
