@@ -457,7 +457,10 @@ export default function ChatWidget() {
               className="text-xs"
             >
               {!message.isSender && (
-                <ChatBubbleAvatar fallback="S" user={message.user} />
+                <ChatBubbleAvatar
+                  fallback={message.user.charAt(0)}
+                  user={message.user}
+                />
               )}
               {message.content === "How do you want to contact us?" ? (
                 <div className="flex flex-col gap-2">
