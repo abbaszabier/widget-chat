@@ -191,7 +191,7 @@ export default function ChatWidget() {
               id: 4,
               isSender: true,
               user: "User",
-              content: "Hi, this is example user reply message",
+              content: "Nice, this is example I'm replying to the agent",
               replyTo: {
                 id: 3,
                 isSender: false,
@@ -262,7 +262,7 @@ export default function ChatWidget() {
         },
       ]);
     }
-  }, [messages, isAgentAvailable]);
+  }, [messages.length, isAgentAvailable]);
 
   const actionUserIcons = [
     {
