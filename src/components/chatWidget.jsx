@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/chat/expandable-chat";
 import { ChatMessageList } from "@/components/ui/chat/chat-message-list";
 import { Button } from "./ui/button";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, Copy, Edit, Reply, RotateCcw, Trash } from "lucide-react";
 import Image from "next/image";
 import {
@@ -36,42 +36,6 @@ export default function ChatWidget() {
       isSender: false,
       user: "Sam",
       content: "Welcome to Sam's Website Support. What is your name?",
-      replyTo: null,
-      file: null,
-      date: formatDate(new Date()),
-    },
-    {
-      id: 2,
-      isSender: true,
-      user: "User",
-      content: "John Doe",
-      replyTo: null,
-      file: null,
-      date: formatDate(new Date()),
-    },
-    {
-      id: 3,
-      isSender: false,
-      user: "Sam",
-      content: "What is your email?",
-      replyTo: null,
-      file: null,
-      date: formatDate(new Date()),
-    },
-    {
-      id: 4,
-      isSender: true,
-      user: "User",
-      content: "john.doe@example.com",
-      replyTo: null,
-      file: null,
-      date: formatDate(new Date()),
-    },
-    {
-      id: 5,
-      isSender: false,
-      user: "Sam",
-      content: "How do you want to contact us?",
       replyTo: null,
       file: null,
       date: formatDate(new Date()),
@@ -98,7 +62,7 @@ export default function ChatWidget() {
   ]);
 
   // agent availability
-  const [isAgentAvailable, setIsAgentAvailable] = useState(true);
+  const [isAgentAvailable, setIsAgentAvailable] = useState(false);
 
   // loading state
   const [isLoading, setIsLoading] = useState(false);
@@ -121,45 +85,10 @@ export default function ChatWidget() {
         file: null,
         date: formatDate(new Date()),
       },
-      {
-        id: 2,
-        isSender: true,
-        user: "User",
-        content: "John Doe",
-        replyTo: null,
-        file: null,
-        date: formatDate(new Date()),
-      },
-      {
-        id: 3,
-        isSender: false,
-        user: "Sam",
-        content: "What is your email?",
-        replyTo: null,
-        file: null,
-        date: formatDate(new Date()),
-      },
-      {
-        id: 4,
-        isSender: true,
-        user: "User",
-        content: "john.doe@example.com",
-        replyTo: null,
-        file: null,
-        date: formatDate(new Date()),
-      },
-      {
-        id: 5,
-        isSender: false,
-        user: "Sam",
-        content: "How do you want to contact us?",
-        replyTo: null,
-        file: null,
-        date: formatDate(new Date()),
-      },
     ]);
 
     setOpen(false);
+    setIsAgentAvailable(false);
   };
 
   // handle contact selection
@@ -217,7 +146,9 @@ export default function ChatWidget() {
 
       // a dummy agent availability check
       setTimeout(() => {
-        if (isAgentAvailable) {
+        const isAvailable = !isAgentAvailable;
+        setIsAgentAvailable(isAvailable);
+        if (isAvailable) {
           // Reset the messages and show the agent's greeting message
           setMessages([
             {
@@ -302,6 +233,36 @@ export default function ChatWidget() {
       }, 2000); // delay for 2 seconds
     }
   };
+
+  useEffect(() => {
+    if (messages.length === 2 && !isAgentAvailable) {
+      setMessages([
+        ...messages,
+        {
+          id: messages.length + 1,
+          isSender: false,
+          user: "Sam",
+          content: "What is your email?",
+          replyTo: null,
+          file: null,
+          date: formatDate(new Date()),
+        },
+      ]);
+    } else if (messages.length === 4 && !isAgentAvailable) {
+      setMessages([
+        ...messages,
+        {
+          id: messages.length + 1,
+          isSender: false,
+          user: "Sam",
+          content: "How do you want to contact us?",
+          replyTo: null,
+          file: null,
+          date: formatDate(new Date()),
+        },
+      ]);
+    }
+  }, [messages, !isAgentAvailable]);
 
   const actionUserIcons = [
     {
