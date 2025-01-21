@@ -32,7 +32,7 @@ const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
         >
           <div className="flex flex-col gap-6">{children}</div>
         </div>
-
+        {/* 
         {!isAtBottom && (
           <button
             onClick={() => {
@@ -43,7 +43,7 @@ const ChatMessageList = React.forwardRef<HTMLDivElement, ChatMessageListProps>(
           >
             <ArrowDown className="h-4 w-4" />
           </button>
-        )}
+        )} */}
       </div>
     );
   }

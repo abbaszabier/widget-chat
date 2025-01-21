@@ -77,8 +77,6 @@ const chatBubbleMessageVariants = cva("p-3", {
     variant: {
       received:
         "bg-[#FAFAFA] border border-[#E9EAEB] text-[#181D27] rounded-r-lg rounded-bl-lg",
-      received2:
-        "bg-[#FAFAFA] border border-[#E9EAEB] text-[#181D27] rounded-lg",
       sent: "bg-[#2970FF] text-white rounded-l-lg rounded-br-lg",
     },
     layout: {
@@ -119,7 +117,7 @@ const ChatBubbleMessage = React.forwardRef<
     },
     ref
   ) => (
-    <div className="space-y-1">
+    <div className={`space-y-1 flex flex-col ${isSender ? "items-end" : ""}`}>
       {!isSender && (
         <span className="text-xs text-[#414651] font-medium">
           {isSender ? "" : user} • {time}
@@ -133,7 +131,7 @@ const ChatBubbleMessage = React.forwardRef<
       <div
         className={cn(
           chatBubbleMessageVariants({ variant, layout, className }),
-          "w-full whitespace-pre-wrap"
+          `w-fit whitespace-pre-wrap`
         )}
         ref={ref}
         {...props}
