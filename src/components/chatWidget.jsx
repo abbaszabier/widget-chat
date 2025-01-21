@@ -367,10 +367,11 @@ export default function ChatWidget() {
           message.content ===
           "Hi, this is your support agent. How can I assist you today?"
       ) && (
-        <div className="flex bg-white w-full py-2 px-4 justify-center items-center gap-2">
+        <div className="flex bg-white w-full justify-center items-center">
           <Button
-            size="sm"
-            className="w-full bg-[#2970FF] text-white hover:bg-[#2C7DFF]"
+            variant="none"
+            size="defaultWithNoRound"
+            className="w-full border-b border-input"
             onClick={() => {
               setAction("restart");
               setOpen(true);
@@ -380,9 +381,9 @@ export default function ChatWidget() {
             Restart Chat
           </Button>
           <Button
-            variant="destructive"
-            size="sm"
-            className="w-full"
+            variant="none"
+            size="defaultWithNoRound"
+            className="w-full border-b border-l border-input text-red-500 hover:text-red-500"
             onClick={() => {
               setAction("end");
               setOpen(true);
