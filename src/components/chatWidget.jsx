@@ -38,7 +38,6 @@ export default function ChatWidget() {
       content: "Welcome to Sam's Website Support. What is your name?",
       replyTo: null,
       file: null,
-      // date format Friday, 2:20 PM
       date: formatDate(new Date()),
     },
     {
@@ -99,7 +98,7 @@ export default function ChatWidget() {
   ]);
 
   // agent availability
-  const [isAgentAvailable, setIsAgentAvailable] = useState(null);
+  const [isAgentAvailable, setIsAgentAvailable] = useState(true);
 
   // loading state
   const [isLoading, setIsLoading] = useState(false);
@@ -218,10 +217,7 @@ export default function ChatWidget() {
 
       // a dummy agent availability check
       setTimeout(() => {
-        const agentAvailable = Math.random(0, 1) > 0.5; // Randomly set agent availability
-        setIsAgentAvailable(agentAvailable);
-
-        if (agentAvailable) {
+        if (isAgentAvailable) {
           // Reset the messages and show the agent's greeting message
           setMessages([
             {
@@ -254,6 +250,31 @@ export default function ChatWidget() {
                 user: "User",
                 content: "Hi, this is example user message",
                 replyTo: null,
+                file: null,
+                date: formatDate(new Date()),
+              },
+              file: null,
+              date: formatDate(new Date()),
+            },
+            {
+              id: 4,
+              isSender: true,
+              user: "User",
+              content: "Hi, this is example user reply message",
+              replyTo: {
+                id: 3,
+                isSender: false,
+                user: "Agent",
+                content: "this is example reply from agent",
+                replyTo: {
+                  id: 2,
+                  isSender: true,
+                  user: "User",
+                  content: "Hi, this is example user message",
+                  replyTo: null,
+                  file: null,
+                  date: formatDate(new Date()),
+                },
                 file: null,
                 date: formatDate(new Date()),
               },
@@ -427,6 +448,8 @@ export default function ChatWidget() {
               <hr className="w-1/5 border-t-1 border-[#E9EAEB]" />
             </div>
           )}
+
+          {/* This is the chat messages start here */}
           {messages.map((message) => (
             <ChatBubble
               key={message.id}
@@ -446,11 +469,7 @@ export default function ChatWidget() {
                   >
                     {message.content}
                   </ChatBubbleMessage>
-                  <ChatBubbleMessage
-                    variant="received2"
-                    isSender={true}
-                    user={!message.isSender ? message.user : ""}
-                  >
+                  <div className="p-3 bg-[#FAFAFA] border border-[#E9EAEB] text-[#181D27] rounded-lg">
                     <div className="flex flex-col gap-2">
                       {availableContacts.map((contact) => (
                         <Button
@@ -471,7 +490,7 @@ export default function ChatWidget() {
                         </Button>
                       ))}
                     </div>
-                  </ChatBubbleMessage>
+                  </div>
                 </div>
               ) : message.content ===
                   "All agents are currently busy for your selected contact method. Please try one of the following available options:" &&
@@ -485,11 +504,7 @@ export default function ChatWidget() {
                   >
                     {message.content}
                   </ChatBubbleMessage>
-                  <ChatBubbleMessage
-                    variant="received2"
-                    isSender={true}
-                    user={!message.isSender ? message.user : ""}
-                  >
+                  <div className="p-3 bg-[#FAFAFA] border border-[#E9EAEB] text-[#181D27] rounded-lg">
                     <div className="flex flex-col gap-2">
                       {availableContacts.map((contact) => (
                         <Button
@@ -510,7 +525,7 @@ export default function ChatWidget() {
                         </Button>
                       ))}
                     </div>
-                  </ChatBubbleMessage>
+                  </div>
                 </div>
               ) : (message.content === "Click here to start Telegram") |
                 (message.content === "Click here to start WhatsApp") ? (
@@ -523,12 +538,8 @@ export default function ChatWidget() {
                   >
                     {message.content}
                   </ChatBubbleMessage>
-                  <ChatBubbleMessage
-                    variant="received2"
-                    isSender={true}
-                    user={!message.isSender ? message.user : ""}
-                  >
-                    <div className="flex flex-col gap-2">
+                  <div className="p-3 bg-[#FAFAFA] border border-[#E9EAEB] text-[#181D27] rounded-lg">
+                    <div className="flex flex-col w-full gap-2">
                       {availableContacts
                         .filter(
                           (contact) =>
@@ -562,7 +573,7 @@ export default function ChatWidget() {
                           </Button>
                         ))}
                     </div>
-                  </ChatBubbleMessage>
+                  </div>
                 </div>
               ) : (
                 <ChatBubbleMessage
