@@ -1,6 +1,6 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
-import { Delete, Send, Trash2, X } from "lucide-react";
+import { Delete, Paperclip, Send, Trash2, X } from "lucide-react";
 import { ReplyAndEditBox } from "@/components/replyAndEditBox";
 
 interface ChatInputProps
@@ -120,7 +120,7 @@ const ChatInput = React.forwardRef<HTMLTextAreaElement, ChatInputProps>(
             className="absolute left-4 text-muted-foreground hover:text-foreground"
             aria-label="Attach file"
           >
-            📎
+            <Paperclip size={18} />
           </button>
           <input
             type="file"

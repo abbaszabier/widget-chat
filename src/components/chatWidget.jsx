@@ -262,7 +262,7 @@ export default function ChatWidget() {
         },
       ]);
     }
-  }, [messages, !isAgentAvailable]);
+  }, [messages, isAgentAvailable]);
 
   const actionUserIcons = [
     {
