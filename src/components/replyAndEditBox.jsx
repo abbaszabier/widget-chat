@@ -17,7 +17,7 @@ export const ReplyAndEditBox = ({
               !isSender ? "bg-[#F5F5F5]" : "bg-[#528BFF]"
             } mb-2`
           : "border-[#2970FF]"
-      } bg-gray-100 p-2 rounded`}
+      } p-2 rounded`}
     >
       <div className="flex flex-col">
         <div
