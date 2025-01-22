@@ -236,10 +236,10 @@ export default function ChatWidget() {
 
   useEffect(() => {
     if (messages.length === 2 && !isAgentAvailable) {
-      setMessages([
-        ...messages,
+      setMessages((prevMessages) => [
+        ...prevMessages,
         {
-          id: messages.length + 1,
+          id: prevMessages.length + 1,
           isSender: false,
           user: "Sam",
           content: "What is your email?",
@@ -249,10 +249,10 @@ export default function ChatWidget() {
         },
       ]);
     } else if (messages.length === 4 && !isAgentAvailable) {
-      setMessages([
-        ...messages,
+      setMessages((prevMessages) => [
+        ...prevMessages,
         {
-          id: messages.length + 1,
+          id: prevMessages.length + 1,
           isSender: false,
           user: "Sam",
           content: "How do you want to contact us?",
