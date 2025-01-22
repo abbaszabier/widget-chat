@@ -367,29 +367,29 @@ export default function ChatWidget() {
           message.content ===
           "Hi, this is your support agent. How can I assist you today?"
       ) && (
-        <div className="flex bg-white w-full justify-center items-center">
+        <div className="flex bg-white w-full justify-center items-center shadow">
           <Button
             variant="none"
             size="defaultWithNoRound"
-            className="w-full border-b border-input"
+            className="w-full border-b border-input text-xs"
             onClick={() => {
               setAction("restart");
               setOpen(true);
             }}
           >
-            <RotateCcw className="size-3" />
+            <RotateCcw className="size-1" />
             Restart Chat
           </Button>
           <Button
             variant="none"
             size="defaultWithNoRound"
-            className="w-full border-b border-l border-input text-red-500 hover:text-red-500"
+            className="w-full border-b border-l border-input text-red-500 hover:text-red-500 text-xs"
             onClick={() => {
               setAction("end");
               setOpen(true);
             }}
           >
-            <Trash className="size-3" />
+            <Trash className="size-1" />
             End Chat
           </Button>
         </div>
